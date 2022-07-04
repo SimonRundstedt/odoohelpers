@@ -1,0 +1,21 @@
+#!/bin/bash
+################################################################################
+# A sentence or two about the script
+################################################################################
+
+echo "Moved functionality to own file. Not tested yet. Exiting..."
+exit 1
+
+source _ODOOTOOLS_CONF
+
+##
+
+CWD=`pwd`
+cd /usr/lib/python3/dist-packages/odoo
+for PATCH in /etc/odoo/patch.d/*.patch; do
+    sudo patch -p6 < $PATCH
+done
+cd $CWD
+
+##
+exit 0 # Success

@@ -1,0 +1,18 @@
+#!/bin/bash
+################################################################################
+# Shorthand for opening the Odoo log with emacs
+
+synopsis (){
+  echo "Shorthand for opening the Odoo log with emacs "
+}
+usage(){
+  echo "Usage: $0 "
+}
+
+# No odoo.tools required atm
+#source _ODOOTOOLS_CONF
+
+odooeditlog emacs
+
+##
+exit $?

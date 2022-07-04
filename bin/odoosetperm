@@ -1,0 +1,34 @@
+#!/bin/bash
+################################################################################
+
+synopsis (){
+  echo "Set the permissions of the modulues in odooaddons to something reasonable."
+}
+usage(){
+  echo "Usage: odoosetperm"
+}
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+##
+
+if [ ! -z "$ODOOADDONS" ]; then
+    for p in ${ODOOADDONS//,/ }; do
+        echo -n $p " "
+        sudo chown odoo:odoo $p -R
+        find $p -type d -exec sudo chmod 775 {} \; # Why not just chmod -R ... ? Answer: Files and dirs have different permissions
+        find $p -type f -exec sudo chmod 664 {} \;
+    done
+
+    #sudo chown odoo:odoo $ADDONS_PATH_PREFIX/core-odoo -R
+    #sudo chown odoo:odoo $ADDONS_PATH_PREFIX/odoo-addons -R
+fi
+
+##
+exit 0 # Success

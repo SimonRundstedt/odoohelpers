@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+#%%
+
+import configparser
+import os
+
+#%% ----------------------------------------------------------------------------
+def synopsis():
+    '''
+    Print synopsis of the scripts purpose
+    '''
+    print("List all available modules")
+
+def usage():
+    '''
+    Print sample usage of the script
+    '''
+    print("Usage: odoomodulesprint")
+#%% ----------------------------------------------------------------------------
+'''
+    NOTE: About this implementation: It is standalone and cannot easy leverage
+    odoo.tools to fetch variables.
+'''
+MANIFEST = "__manifest__.py"
+ODOOCONF = "/etc/odoo/odoo.conf"
+
+#%% ----------------------------------------------------------------------------
+def print_modules(modules):
+    '''
+    Print a sorted list of all modules
+    '''
+    module_basenames = [ os.path.basename(m) for m in modules ]
+    module_basenames.sort()
+    for m in module_basenames:
+        print("{}".format((m)))
+    # for module in modules:
+    #         print("{}".format(os.path.basename(module))
+    # for entry in entries:
+    #         print("Basename: {} Fullname: {}".format(os.path.basename(entry),entry) )
+def getmodules(modulespaths):
+    '''
+    List all modules available on the Odoo installation as identified by the
+    addons_path's and the manifest file.
+
+    Parameters
+    ==========
+    modulespaths : iterable
+        Iterable of paths to search for module folders.
+
+    Returns
+    =======
+    list :
+        list containing full paths for all found modules.
+    '''
+    allentries = []
+    for top in modulespaths:
+#        # Single row
+#        entries = ( e for e in (os.path.join(top,X) for X in os.listdir(top)) if os.path.isdir(e)  and os.path.exists(os.path.join(e,MANIFEST)))
+#        # Double row
+        subentries = (os.path.join(top,X) for X in os.listdir(top))
+        entries = [ e for e in subentries if os.path.isdir(e) and os.path.exists(os.path.join(e,MANIFEST)) ]
+        allentries += entries
+    return allentries
+
+#%% ----------------------------------------------------------------------------
+
+odooconf = configparser.ConfigParser()
+odooconf.read(ODOOCONF) # TODO: Check return value
+modules = getmodules( odooconf["options"]["addons_path"].split(",") )
+modules.sort(key= lambda k : os.path.basename(k) )
+print_modules(modules)

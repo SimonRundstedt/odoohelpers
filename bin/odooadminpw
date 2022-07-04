@@ -1,0 +1,25 @@
+#!/bin/bash
+################################################################################
+
+##
+synopsis (){
+  echo "Print the main admin password as stored in odoo.conf"
+}
+usage(){
+  echo "Usage: odooadmin"
+}
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+##
+
+sudo grep -o "^admin_passwd.*$" /etc/odoo/odoo.conf | cut -f 3 -d " "
+
+##
+exit $? # Success

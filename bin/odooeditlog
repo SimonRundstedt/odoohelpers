@@ -1,0 +1,32 @@
+#!/bin/bash
+################################################################################
+# Shorthand for opening the Odoo log with the desired program
+# Defaults to nano.
+################################################################################
+
+synopsis (){
+  echo "Shorthand for opening the Odoo log with the desired program. Defaults to 'nano -l'."
+}
+usage(){
+  echo "Usage: odooeditlog "
+  echo "Usage: odooeditlog less"
+}
+
+# No odoo.tools required atm
+#source _ODOOTOOLS_CONF
+
+EDITOR="nano -l" # -l should be available in at least 20.04 and later
+
+if [ $# -gt 0 ]
+  # Assume the first is the editor
+  then
+		echo "Editor argument set to: $1"
+    EDITOR=$1
+	else
+		echo "No argument set. Using editor: $EDITOR"
+fi
+
+sudo $EDITOR /var/log/odoo/odoo-server.log
+
+##
+exit 0 # Success

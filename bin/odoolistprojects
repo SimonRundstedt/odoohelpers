@@ -1,0 +1,24 @@
+#!/bin/bash
+################################################################################
+
+synopsis (){
+  echo "Shorthand for listing all projects in ADDONS_PATH_PREFIX"
+}
+usage(){
+  echo "Usage: odoolistprojects"
+}
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+##
+
+ls -d $ADDONS_PATH_PREFIX/odoo*
+
+##
+exit 0 # Success

@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+export DH_VERBOSE=1
+
+
+override_dh_auto_build:
+	echo "dh_auto_build tries to do things it's not allowed to on my system."
+
+%:
+	dh ${@}

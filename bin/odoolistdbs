@@ -1,0 +1,31 @@
+#!/bin/bash
+################################################################################
+# List Odoo databases the way odoo finds them
+################################################################################
+
+##
+synopsis (){
+  echo "List all local Odoo databases."
+}
+usage(){
+  echo "Usage: $0"
+}
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+##
+
+# Templates from /usr/lib/python3/dist-packages/odoo/sql_db.py
+TEMPLATES="('template0','template1','postgres')"
+
+# Query from: /usr/lib/python3/dist-packages/odoo/service/db.py
+sudo -u _ODOO_USER psql postgres -tc "SELECT datname FROM pg_database WHERE datdba=(SELECT usesysid FROM pg_user WHERE usename=current_user) AND NOT datistemplate AND datallowconn AND datname NOT IN $TEMPLATES ORDER BY datname;"
+
+##
+exit $?

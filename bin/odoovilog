@@ -1,0 +1,18 @@
+#!/bin/bash
+################################################################################
+# Shorthand for opening the Odoo log with vim
+
+synopsis (){
+  echo "Shorthand for opening the Odoo log with vim "
+}
+usage(){
+  echo "Usage: $0 "
+}
+
+# No odoo.tools required atm
+#source _ODOOTOOLS_CONF
+
+odooeditlog vim
+
+##
+exit $?

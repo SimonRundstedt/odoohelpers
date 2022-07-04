@@ -1,0 +1,34 @@
+#!/bin/bash
+################################################################################
+#
+################################################################################
+
+# echo "Postinstall file - Runs after installation"
+
+# Making odoo a more reqular user
+# It can be useful when doing some operations.
+echo "Enabling bash login for the odoo user..."
+sudo sed -i 's|/var/lib/odoo:/usr/sbin/nologin|/var/lib/odoo:/bin/bash|g' /etc/passwd
+if [ $? -eq 0 ]; then
+    echo "Bash login enabled for user 'odoo'"
+else
+    echo "Failed to enable Bash login for user 'odoo'"
+    echo "Some odootools commands might not work properly."
+    echo "Continuing installation." # Failure is not a dealbreaker for odootools
+fi
+
+## Change admin password - Required for some odootools operations to work
+# properly.
+echo "Changing admin password..."
+sudo sed -i "s|^; admin_passwd = .*|admin_passwd = $(openssl rand -base64 32)|g" /etc/odoo/odoo.conf
+if [ $? -eq 0 ]; then
+    echo "Odoo admin password changed."
+else
+    echo "Failure when setting the Odoo admin password."
+    echo "Some odootools commands might not work as intended."
+fi
+
+
+
+## End
+exit 0 # 0 = success

@@ -1,0 +1,102 @@
+#!/bin/bash
+################################################################################
+# A sentence or two about the script
+################################################################################
+
+source _ODOOTOOLS_CONF
+
+synopsis (){
+    echo "Sync Odoo projects to other installation. Excludes .git folders."
+}
+
+usage() { echo "Usage: $0 [-p <project>] [-h <host>] [-u <remote username>]" 1>&2; exit 1; }
+
+##
+
+local OPTIND
+local OPTARG
+local option
+while getopts ":p:h:" option; do
+    case $option in
+        p) ODOOPROJECT=${OPTARG%/} ; echo "Project: $option $ODOOPROJECT" ;;
+        h) HOST=${OPTARG} ; echo "Host: $option $OPTARG" ;;
+        \:) echo "Option $option requires an argument" ; return ;;
+        \?) echo "Illegal argument ${option}::${OPTARG}" ; return ;;
+    esac
+done
+
+if [ -z "$ODOOPROJECT" ] ; then
+  echo "You have to set -p option to continue"
+  exit 1
+fi
+# ------------------------------------------------------------------------------
+##
+SHORT_ARGS='h:up'
+LONG_ARGS='help,host:,user,project'# Comma separated
+
+# Dev. note: Based on /usr/share/doc/util-linux/examples/getopt-parse.bash
+# And getopt != getopts
+options=$(getopt -o "$SHORT_ARGS" --long "$LONG_ARGS" -- "$@")
+if [ $? -ne 0 ]; then
+	echo 'getopt could not parse input. Terminating...' >&2
+	exit 1
+fi
+eval set -- "$options" # Changing positional params to getopt filtered version of them.
+unset options # We don't need the options any more.
+
+# consume 1-2 positional params as flags at the time until there are no more.
+while true
+do
+	case "$1" in
+		'-h' | '--host' )
+			HOST=$2
+            shift 2 ; continue ;;
+        '-u' | '--user' )
+            ODOOPROJECT=$2
+            shift 2 ; continue ;;
+        '-u' | '--user' )
+            REMOTEUSER=$2
+            shift 2 ; continue ;;
+		'--help' )
+			synopsis
+            usage
+            shift
+            exit 0 # Success
+            ;;
+		'--') # End of flagged params
+			shift
+			break # Break while loop
+			;; # Put here because it doesn't feel right to remove it
+		*)
+			echo "Internal error parsing input. Terminating ..." >&2
+			exit 1
+	esac
+done
+# echo "Positional parameters:"
+# for arg in "$@"
+# do
+# 	echo $arg
+# done
+if [ -z "$HOST" ]; then
+    echo "Sync target not set. Exiting ..." >&2
+    exit 1
+fi
+if [ -z "$ODOOPROJECT" ]; then
+    echo "Sync project not set. Exiting ..." >&2
+    exit 1
+fi
+if [ -z "$REMOTEUSER" ]; then
+    # Alt: whoami (not quite the same behavior)
+    REMOTEUSER=$USER
+    echo "Remote user:" $REMOTEUSER
+fi
+
+
+# ------------------------------------------------------------------------------
+
+sudo chown odoo:odoo $ADDONS_PATH_PREFIX/$ODOOPROJECT -R
+# Assumes the layout of the sync target is the same as local:
+rsync -var --delete --exclude='.git/' $ADDONS_PATH_PREFIX/$ODOOPROJECT $REMOTEUSER@$HOST:$ADDONS_PATH_PREFIX
+
+##
+exit 0 # Success

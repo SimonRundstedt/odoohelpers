@@ -1,0 +1,32 @@
+#!/bin/bash
+################################################################################
+
+##
+synopsis (){
+  echo "Create a copy of target database with the email server disabled."
+  echo "Other services with test modes such as payment aquirers need to be changed manually."
+}
+usage(){
+  echo "Usage: odoocreatetestdb client_db"
+}
+##
+
+if [ -z ${1} ];then
+    echo "Usage: odoocreatetestdb <database name> <input file or stdin>"
+    return
+fi
+sudo service odoo stop
+if sudo -u odoo psql -lqt| cut -d \| -f 1|grep -qw $1; then
+    echo "Database "$1" already exists!"
+    return
+fi
+sudo -u odoo createdb $1
+zcat "${2:-/dev/stdin}" | sudo -u odoo psql $1
+sudo -u odoo psql $1 -c "update fetchmail_server set active = false;"
+sudo -u odoo psql $1 -c "update ir_mail_server set active = false;"
+sudo service odoo start
+sleep 1
+odooupd -d $1 -i -m web_environment_ribbon
+
+##
+exit 0 # Success

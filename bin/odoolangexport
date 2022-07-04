@@ -1,0 +1,49 @@
+#!/bin/bash
+################################################################################
+# A sentence or two about the script
+################################################################################
+
+echo "Moved functionality to own file. Not tested yet. Exiting..."
+exit 1
+
+source _ODOOTOOLS_CONF
+
+##
+
+usage() { echo "Usage: $0 [-d <database>] [-m <module>] [-l <language>]" 1>&2; exit 1; }
+[ -f _ODOOTOOLS_CONF ] && . _ODOOTOOLS_CONF
+local OPTIND  # To force the while getops loop
+local OPTARG
+local option
+local L
+while getopts ":m:d:l:" option; do
+    case "${option}" in
+        d|db) DATABASES=${OPTARG} ; echo "DB: $option $OPTARG" ;;
+        m|module) MODULES=${OPTARG} ;;
+        l|language) L=${OPTARG} ;;
+        \:) echo "Option $option requires an argument" ; return ;;
+        \?) echo "Illegal argument ${option}::${OPTARG}" ; return ;;
+    esac
+done
+echo "For databases=${DATABASES} modules=${MODULES} language=${L}"
+if [ ! -z "${L}" ]
+then
+    LCMD="-l ${L}"
+    FILE="${L}.po"
+else
+    LCMD="-l ''"
+    FILE="${MODULES}.po"
+fi
+echo $FILE
+sudo service odoo stop
+echo "odoo.py --modules='${MODULES}' -d ${DATABASES} ${LCMD} --stop-after-init --i18n-export='${FILE}'"
+sudo su odoo -c "odoo.py -c /etc/odoo/odoo.conf --modules='${MODULES}' -d ${DATABASES} ${LCMD} --stop-after-init --i18n-export='${FILE}'"
+sudo service odoo start
+sudo chown ${USER} ${FILE}
+if [ -z "${L}" ]
+then
+    mv ${FILE} ${FILE}t
+fi
+
+##
+exit 0 # Success

@@ -1,0 +1,27 @@
+#!/bin/bash
+################################################################################
+
+synopsis (){
+  echo "Prints all non template databases in postgres"
+}
+usage(){
+  echo "Usage: odooalldbs"
+}
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+
+##
+# Modified legacy row:
+#sudo -u postgres psql -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND 'postgres' <> datname;" postgres
+# This seem to do the intended thing:
+sudo -u postgres psql -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND 'postgres' <> datname;"
+
+##
+exit 0 # Success

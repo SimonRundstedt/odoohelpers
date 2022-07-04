@@ -1,0 +1,30 @@
+#!/bin/bash
+################################################################################
+
+synopsis (){
+  echo "A sentence of the purpose"
+}
+usage(){
+  echo "Usage: A sample call of the script"
+}
+
+## Test if conf exist so we don't garble stuff
+# if [ -f _ODOOTOOLS_CONF ];
+# then
+#   source _ODOOTOOLS_CONF
+# else
+#   echo "Configuration _ODOOTOOLS_CONF not found"
+#   exit -1
+# fi
+
+##
+
+for DB in `sudo su postgres -c "psql -At -c \"select datname from pg_database where datistemplate = false and 'postgres' <> datname;\" postgres"`
+do
+    if odooupd -d $DB -c $1; then
+        echo $DB
+    fi
+done
+
+##
+exit 0 # Success

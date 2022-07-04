@@ -1,0 +1,19 @@
+Source: odootools
+Standards-Version: 0.0.1.1
+Maintainer: Simon Rundstedt <simon.rundstedt@vertel.se>
+Section: utils
+Description: Tools to help manage an Odoo installation.
+ This package contain tool and utilities to manage an Odoo installation as
+ applicable at Vertel AB.
+Priority: optional
+Build-Depends: debhelper-compat (= 12)
+Vcs-Browser: https://github.com/SimonRundstedt/odoohelpers
+Vcs-Git: https://github.com/SimonRundstedt/odoohelpers
+
+Package: odootools
+Architecture: all
+Pre-Depends: odoo (>= 11.0.0)
+Depends: bash (>= 3.0.0) python3 (>=3.0.0)
+Description: Tools to help manage an Odoo installation.
+ This package contain tool and utilities to manage an Odoo installation as
+ applicable at Vertel AB.

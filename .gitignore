@@ -1,0 +1,7 @@
+testinstall/
+build/
+debian/.debhelper/
+debian/debhelper*
+debian/files
+debian/odootools*
+debian/odootools/

@@ -1,0 +1,23 @@
+#!/bin/bash
+################################################################################
+# tail-follow the Odoo log.
+################################################################################
+
+synopsis (){
+  echo "Follow the Odoo log."
+}
+usage(){
+  echo "Usage: odootail"
+}
+
+#source _ODOOTOOLS_CONF
+
+##
+tail -f /var/log/odoo/odoo-server.log | awk ' {
+  gsub("INFO", "\033[0;32mINFO\033[0m", $0);
+  gsub("WARNING", "\033[0;33mWARNING\033[0m", $0);
+  gsub("ERROR", "\033[0;31mERROR\033[0m", $0);
+  print $0 };
+  '
+##
+exit $?

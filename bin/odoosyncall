@@ -1,0 +1,82 @@
+#!/bin/bash
+################################################################################
+
+synopsis (){
+  echo "Sync list of Odoo projects to other installation. Excludes .git folders."
+}
+usage() { echo "Usage: $0 [-h <host>]" 1>&2; exit 1; }
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+
+
+##
+SHORT_ARGS='h:u'
+LONG_ARGS='help,host:user'# Comma separated
+
+# Dev. note: Based on /usr/share/doc/util-linux/examples/getopt-parse.bash
+# And getopt != getopts
+options=$(getopt -o "$SHORT_ARGS" --long "$LONG_ARGS" -- "$@")
+if [ $? -ne 0 ]; then
+	echo 'getopt could not parse input. Terminating...' >&2
+	exit 1
+fi
+eval set -- "$options" # Changing positional params to getopt filtered version of them.
+unset options # We don't need the options any more.
+
+# consume 1-2 positional params as flags at the time until there are no more.
+while true
+do
+	case "$1" in
+		'-h' | '--host' )
+			HOST=$2
+            shift 2 ; continue ;;
+        '-u' | '--user' )
+                REMOTEUSER=$2
+                shift 2 ; continue ;;
+		'--help' )
+			synopsis
+            usage
+            shift
+            exit 0 # Success
+            ;;
+		'--') # End of flagged params
+			shift
+			break # Break while loop
+			;; # Put here because it doesn't feel right to remove it
+		*)
+			echo "Internal error parsing input. Terminating ..." >&2
+			exit 1
+	esac
+done
+# echo "Positional parameters:"
+# for arg in "$@"
+# do
+# 	echo $arg
+# done
+if [ -z "$HOST" ]; then
+    echo "Sync target not set. Exiting ..." >&2
+    exit 1
+fi
+if [ -z "$REMOTEUSER" ]; then
+    REMOTEUSER=$USER
+    echo "Remote user not set. Using current user:" $REMOTEUSER
+fi
+
+## -------------------------------------------------------------------------- ##
+
+if [ -n "$ODOOADDONS" ]; then
+    for p in ${ODOOADDONS//,/ }; do
+        echo -n "$p "
+        odoosync -h $HOST -p $p -u $REMOTEUSER
+    done
+fi
+
+##
+exit 0 # Success

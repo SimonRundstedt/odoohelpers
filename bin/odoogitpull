@@ -1,0 +1,34 @@
+#!/bin/bash
+################################################################################
+
+##
+synopsis (){
+  echo "Shorthand for performing a git pull on all projects in ADDONS_PATH_PREFIX"
+}
+usage(){
+  echo "Usage: odoogitpull"
+}
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+
+##
+
+if [ ! -z "$ODOOADDONS" ]; then
+    CWD=`pwd`
+    for p in ${ODOOADDONS//,/ }; do
+        cd $p
+        echo -n $p " "
+        git pull 2> ~/odoogitpull.err
+    done
+    cat ~/odoogitpull.err
+    cd $CWD
+fi
+
+##
+exit 0 # Success

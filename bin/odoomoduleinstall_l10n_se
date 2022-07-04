@@ -1,0 +1,26 @@
+#!/bin/bash
+################################################################################
+
+# TODO: Improve odoogitclone to help resolve conflicting modules
+synopsis (){
+  echo "Install Vertel's l10n_se module. It is different and conflicting with the Odoo core module."
+}
+usage(){
+  echo "Usage: $0"
+}
+
+## Test if conf exist so we don't garble stuff
+if [ -f _ODOOTOOLS_CONF ];
+then
+  source _ODOOTOOLS_CONF
+else
+  echo "Configuration _ODOOTOOLS_CONF not found"
+  exit -1
+fi
+##
+
+odoogitclone odoo-l10n_se
+sudo mv $ODOOCORE/addons/l10n_se $ODOOCORE/addons/l10n_se_CONFLICT
+
+##
+exit 0 # Success
