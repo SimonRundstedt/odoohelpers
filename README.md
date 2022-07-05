@@ -63,6 +63,7 @@ odooupdm *database* *modulelist*      | Installs/updates modules in single user 
 Some terms are reserved for the build process and will be replaced to the
 appropriate value during build.
 
+Reserved term | Related make-file variable  | Description
 --- | --- | ---
 `_ODOOTOOLS_CONF` | `odootoolconf`, `odootoolconfdir`, `sysconfdir` |Location of `odoo.conf`.
 `_ODOO_USER`      | `odoouser` |User odoo runs with.
