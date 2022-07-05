@@ -1,5 +1,6 @@
-odootools (0.1.1.1) UNRELEASED; urgency=medium
+odootools (0.0.0.1ubuntu1) focal; urgency=medium
 
   * Initial release. (Closes: #000000)
+  * Experimental release for sign and upload test.
 
- -- Simon Rundstedt <simon.rundstedt@vertel.se>  Mon, 04 Jul 2022 21:55:38 +0200
+ -- Simon Rundstedt <simon.rundstedt@vertel.se>  Tue, 05 Jul 2022 09:25:00 +0200

@@ -1,5 +1,5 @@
 Source: odootools
-Standards-Version: 0.1.1.1
+Standards-Version: 0.0.0.1
 Maintainer: Simon Rundstedt <simon.rundstedt@vertel.se>
 Section: utils
 Description: Tools to help manage an Odoo installation.
